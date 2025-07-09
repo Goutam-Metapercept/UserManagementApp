@@ -1,6 +1,7 @@
 package com.lade.service;
 
 import com.lade.DTO.*;
+import com.lade.JWT.JwtService;
 import com.lade.entity.User;
 import com.lade.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,8 @@ public class AuthenticationService {
     @Autowired
     private AuthenticationManager authenticationManager;
     
-    
+    @Autowired
+    private JwtService jwtService;
 
     public UserDTO registerNormalUser(RegisterRequestDTO request) {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
