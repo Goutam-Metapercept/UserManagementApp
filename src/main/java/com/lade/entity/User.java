@@ -24,7 +24,7 @@ import lombok.Builder;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User implements UserDetails{
+public class User implements UserDetails {
 
     @Id
     private String id;
@@ -33,7 +33,7 @@ public class User implements UserDetails{
 
     private String email;
 
-    private String passsword;
+    private String password;
 
     private boolean isActive = true;
 
@@ -45,19 +45,40 @@ public class User implements UserDetails{
 
     private Set<String> roles;
 
-    //wrap with granted authority
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// TODO Auto-generated method stub
-		return roles.stream()
-				.map(SimpleGrantedAuthority::new)
-				.collect(Collectors.toList());
-	}
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+    }
 
-	@Override
-	public String getPassword() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public String getPassword() {
+        return this.password;
+    }
 
+    @Override
+    public String getUsername() {
+        return this.username;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.isActive;
+    }
 }

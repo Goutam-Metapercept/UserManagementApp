@@ -58,7 +58,7 @@ public class UserService {
 
         User user = userOpt.get();
 
-        if (!passwordEncoder.matches(changePasswordDTO.getCurrentPassword(), user.getPasssword())) {
+        if (!passwordEncoder.matches(changePasswordDTO.getCurrentPassword(), user.getPassword())) {
             throw new RuntimeException("Current password is incorrect");
         }
 
@@ -66,7 +66,7 @@ public class UserService {
             throw new RuntimeException("New password and confirm password do not match");
         }
 
-        user.setPasssword(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
+        user.setPassword(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
         return toDTO(userRepository.save(user));
     }
 

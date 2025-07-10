@@ -1,5 +1,7 @@
 package com.lade.DTO;
 
+import java.util.Set;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -17,4 +19,5 @@ public class UserDTO {
 	@Size(max=70)
 	@Email
 	private String email;
+	private Set<String>roles;
 }

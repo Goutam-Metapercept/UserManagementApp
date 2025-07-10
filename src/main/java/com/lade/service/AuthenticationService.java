@@ -4,16 +4,16 @@ import com.lade.DTO.*;
 import com.lade.JWT.JwtService;
 import com.lade.entity.User;
 import com.lade.repository.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.function.ServerRequest.Headers;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,11 +24,12 @@ public class AuthenticationService {
     private UserRepository userRepository;
 
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
-    
+    private PasswordEncoder passwordEncoder;
+
+
     @Autowired
     private AuthenticationManager authenticationManager;
-    
+
     @Autowired
     private JwtService jwtService;
 
@@ -37,40 +38,38 @@ public class AuthenticationService {
             throw new RuntimeException("User is already registered");
         }
 
-       Set<String>set=new HashSet<String>();
-       set.add("ROLE_USER");
-       
-       User user=new User();
-       user.setUsername(request.getUsername());
-       user.setEmail(request.getEmail());
-       user.setPasssword(passwordEncoder.encode(request.getPassword()));
-       user.setRoles(set);
-      
-       User savedUser=userRepository.save(user);
-       return toDTO(savedUser);
-        
+        Set<String> roles = new HashSet<>();
+        roles.add("ROLE_USER");
+
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRoles(roles);
+
+        User savedUser = userRepository.save(user);
+        return toDTO(savedUser);
     }
+
     public UserDTO registerAdminUser(RegisterRequestDTO request) {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             throw new RuntimeException("User is already registered");
         }
 
-       Set<String>set=new HashSet<String>();
-       set.add("ROLE_ADMIN");
-       set.add("ROLE_USER");
-       
-       
-       User user=new User();
-       user.setUsername(request.getUsername());
-       user.setEmail(request.getEmail());
-       user.setPasssword(passwordEncoder.encode(request.getPassword()));
-       user.setRoles(set);
-      
-       User savedUser=userRepository.save(user);
-       return toDTO(savedUser);
-        
+        Set<String> roles = new HashSet<>();
+        roles.add("ROLE_ADMIN");
+        roles.add("ROLE_USER");
+
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRoles(roles);
+
+        User savedUser = userRepository.save(user);
+        return toDTO(savedUser);
     }
-    
+
     public LoginResponseDTO login(LoginRequestDTO request) {
         // Authenticate user using Spring Security
         authenticationManager.authenticate(
@@ -94,14 +93,13 @@ public class AuthenticationService {
                 .build();
     }
 
-    public ResponseEntity<String> logout()
-    {
+    public ResponseEntity<String> logout() {
         // Create an expired cookie to clear JWT
         ResponseCookie cookie = ResponseCookie.from("JWT", "")
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
-                .maxAge(0) // expires immediately
+                .maxAge(0)
                 .sameSite("Strict")
                 .build();
 
@@ -109,7 +107,7 @@ public class AuthenticationService {
                 .header("Set-Cookie", cookie.toString())
                 .body("Logged out successfully");
     }
-  
+
     private UserDTO toDTO(User user) {
         UserDTO dto = new UserDTO();
         dto.setId(user.getId());
@@ -117,6 +115,4 @@ public class AuthenticationService {
         dto.setEmail(user.getEmail());
         return dto;
     }
-
-   
 }
