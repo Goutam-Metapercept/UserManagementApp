@@ -113,6 +113,8 @@ public class AuthenticationService {
         dto.setId(user.getId());
         dto.setUsername(user.getUsername());
         dto.setEmail(user.getEmail());
+        dto.setRoles(user.getRoles()); // ✅ Add this line
         return dto;
     }
+
 }

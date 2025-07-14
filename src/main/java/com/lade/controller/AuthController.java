@@ -31,8 +31,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserDTO> login(@Valid @RequestBody LoginRequestDTO request) {
+    public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO request) {
         LoginResponseDTO loginResponseDTO = authService.login(request);
+        
         ResponseCookie cookie = ResponseCookie.from("JWT", loginResponseDTO.getJwtToken())
                 .httpOnly(true)
                 .secure(false)
@@ -43,7 +44,7 @@ public class AuthController {
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .body(loginResponseDTO.getUserDTO());
+                .body(loginResponseDTO); // includes token and userDTO
     }
 
     @PostMapping("/logout")
